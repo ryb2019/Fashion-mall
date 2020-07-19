@@ -1,5 +1,5 @@
 <template>
-  <div class="goodslist">
+  <div class="goods">
     <GoodsListitem v-for="item in goods" :goods-item="item"/>
 
 
@@ -29,5 +29,10 @@
 </script>
 
 <style scoped>
-
+.goods{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 5px;
+}
 </style>

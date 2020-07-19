@@ -6,8 +6,8 @@
     <HomeSwiper :banners="banners" class="HS"></HomeSwiper>
     <RecommendView :recommend="recommends"></RecommendView>
     <FeatureView/>
-    <TabControl class="tab-control" :titles="['流行','新款','精选']"/>
-    <GoodsList :goods="goods['pop'].list"/>
+    <TabControl class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+    <GoodsList :goods="goods[currentType].list"/>
     <ui>
       <li>{你好1}</li>
       <li>{你好2}</li>
@@ -115,7 +115,7 @@
 </template>
 
 <script>
-  import {getHomeMultidata,getHomeGoods} from "../../network/home";
+  import {getHomeMultidata, getHomeGoods} from "../../network/home";
   import TabControl from "../../components/content/tabControl/TabControl";
   import NavBar from "../../components/common/navbar/NavBar";
   import HomeSwiper from "./childComps/HomeSwiper";
@@ -140,15 +140,12 @@
         result: null,
         banners: [],
         recommends: [],
-        goods:{
-          'pop':{page:0,list:[]},
-          'new':{page:0,list:[]},
-          'sell':{page:0,list:[]},
-
-
-        }
-
-
+        goods: {
+          'pop': {page: 0, list: []},
+          'new': {page: 0, list: []},
+          'sell': {page: 0, list: []},
+        },
+        currentType: 'pop'
 
 
       }
@@ -157,35 +154,50 @@
 
     created() {
       this.getHomeMultidata()
-      this.getHomeGoods('pop',1)
-      this.getHomeGoods('sell',1)
-      this.getHomeGoods('new',1)
-
+      this.getHomeGoods('pop', 1)
+      this.getHomeGoods('sell', 1)
+      this.getHomeGoods('new', 1)
 
 
     },
 
-    methods:{
-      getHomeMultidata(){
-      getHomeMultidata().then(res => {
-        //请求到的数据res需要变量保存，保存在上面的定义的result中
-        this.result = res;
-        this.banners = res.data.banner.list
-        this.recommends = res.data.recommend.list
-      })},
+    methods: {
+      getHomeMultidata() {
+        getHomeMultidata().then(res => {
+          //请求到的数据res需要变量保存，保存在上面的定义的result中
+          this.result = res;
+          this.banners = res.data.banner.list
+          this.recommends = res.data.recommend.list
+        })
+      },
 
 
-
-
-      getHomeGoods(type){
-        const page=this.goods[type].page+1
-        getHomeGoods(type,page).then(res=>{
+      getHomeGoods(type) {
+        const page = this.goods[type].page + 1
+        getHomeGoods(type, page).then(res => {
           console.log(res);
           console.log(res.data.list);
           this.goods[type].list.push(...res.data.list);
           console.log(this.goods[type].list);
-          this.goods[type].page+=1
+          this.goods[type].page += 1
         })
+
+      },
+
+      tabClick(index) {
+        console.log(index);
+        switch (index) {
+          case 0:
+            this.currentType = 'pop'
+                break
+          case 1:
+            this.currentType = 'new'
+            break
+          case 2:
+            this.currentType = 'sell'
+            break
+        }
+
 
       }
 
@@ -219,6 +231,7 @@
   .tab-control {
     position: sticky;
     top: 44px;
+    z-index: 9;
   }
 
 
